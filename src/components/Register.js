@@ -101,13 +101,13 @@ const Register = () => {
     }
 
     if (status === 'failed' && error) {
-      if (error.detail === 'Email already exists') {
-        toast.error('This email is already registered. Please use a different email.', {
+      if (error.email) {
+        toast.error(`Error: ${error.email[0]}`, {
           position: 'top-right',
           autoClose: 3000,
         });
       } else {
-        toast.error(`Error: ${error.detail || 'Registration failed'}`, {
+        toast.error('Registration failed. Please try again.', {
           position: 'top-right',
           autoClose: 3000,
         });

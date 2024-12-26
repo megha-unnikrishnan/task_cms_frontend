@@ -6,7 +6,7 @@ export const loginUser = createAsyncThunk(
     'auth/loginUser',
     async (userData, { rejectWithValue }) => {
       try {
-        const response = await axios.post('http://localhost:8000/api/token/', userData);
+        const response = await axios.post('https://cmsback-92c833c9c2a1.herokuapp.com/api/token/', userData);
         console.log("Login Response:", response.data);
         return response.data; // Return the token and user data
       } catch (error) {
@@ -22,7 +22,7 @@ export const loginUser = createAsyncThunk(
     'auth/registerUser',
     async (userData, { rejectWithValue }) => {
       try {
-        const response = await axios.post('http://localhost:8000/api/register/', userData);
+        const response = await axios.post('https://cmsback-92c833c9c2a1.herokuapp.com/api/register/', userData);
         console.log("Registration Response:", response.data);
         return response.data; // Return the registration data
       } catch (error) {

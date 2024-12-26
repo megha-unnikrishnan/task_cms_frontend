@@ -1,7 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+import { logout } from '../features/authSlice';
+import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import { useDispatch } from 'react-redux';
 const Sidebar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout()); // Dispatch logout action
+    toast.success('Logged out successfully!', {
+      position: 'top-right',
+      autoClose: 1000,
+    });
+    navigate('/login'); // Redirect to login page
+  };
   return (
     <div className="w-64 bg-indigo-600 text-white min-h-screen flex flex-col">
       <div className="p-4 text-xl font-bold">Admin Dashboard</div>
@@ -21,9 +35,12 @@ const Sidebar = () => {
           </li>
         </ul>
       </div>
-      <div className="p-4 border-t border-indigo-700">
-        <Link to="/login" className="hover:text-indigo-200">Logout</Link>
-      </div>
+      <button
+                onClick={handleLogout}
+                className="w-full text-left py-2 px-4 text-white bg-red-600 hover:bg-red-700 rounded-lg"
+              >
+                Logout
+              </button>
     </div>
   );
 };

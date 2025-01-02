@@ -19,22 +19,8 @@ const AdminDashboard = () => {
       navigate('/login');
     }
 
-    // Fetch user and post data (replace with actual API calls)
-    const fetchData = async () => {
-      try {
-        const usersResponse = await fetch('/api/users');
-        const postsResponse = await fetch('/api/posts');
-        const usersData = await usersResponse.json();
-        const postsData = await postsResponse.json();
-
-        setUsers(usersData);
-        setPosts(postsData);
-      } catch (error) {
-        toast.error('Failed to load data', { position: 'top-right', autoClose: 3000 });
-      }
-    };
-
-    fetchData();
+   
+    
   }, [isAdmin, navigate]);
 
   return (

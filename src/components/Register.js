@@ -1,14 +1,13 @@
+
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerUser } from '../features/authSlice';
-import { useNavigate } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 const Register = () => {
   const dispatch = useDispatch();
   const { status, error } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,6 +17,9 @@ const Register = () => {
   const [profilePicture, setProfilePicture] = useState(null);
   const [phone, setPhone] = useState('');
   const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   const validateForm = () => {
     let formErrors = {};
@@ -30,7 +32,7 @@ const Register = () => {
       formErrors.email = 'Invalid email format';
     }
 
-    // Full Name validation (only letters)
+    // Full name validation
     const nameRegex = /^[A-Za-z\s]+$/;
     if (!fullName) {
       formErrors.fullName = 'Full Name is required';
@@ -38,14 +40,14 @@ const Register = () => {
       formErrors.fullName = 'Full Name must contain only letters';
     }
 
-    // Date of Birth validation (not in the future)
+    // Date of birth validation
     if (!dob) {
       formErrors.dob = 'Date of Birth is required';
     } else if (new Date(dob) > new Date()) {
       formErrors.dob = 'Date of Birth cannot be in the future';
     }
 
-    // Phone validation (10 digits)
+    // Phone number validation
     const phoneRegex = /^[0-9]{10}$/;
     if (!phone) {
       formErrors.phone = 'Phone number is required';
@@ -60,7 +62,7 @@ const Register = () => {
       formErrors.confirmPassword = 'Passwords do not match';
     }
 
-    // Profile Picture validation (only image files)
+    // Profile picture validation
     if (profilePicture && !profilePicture.type.startsWith('image')) {
       formErrors.profilePicture = 'Profile picture must be an image file';
     }
@@ -80,44 +82,38 @@ const Register = () => {
       formData.append('confirm_password', confirmPassword);
       formData.append('phone', phone);
       if (profilePicture) formData.append('profile_picture', profilePicture);
+
       dispatch(registerUser(formData));
     } else {
-      toast.error('Please fix the errors before submitting.', {
-        position: 'top-right',
-        autoClose: 3000,
-      });
+      setErrorMessage('Please fix the errors before submitting.');
     }
   };
 
   useEffect(() => {
     if (status === 'succeeded') {
-      toast.success('Registration successful! Redirecting...', {
-        position: 'top-right',
-        autoClose: 3000,
-      });
-      setTimeout(() => {
-        navigate('/login'); 
-      }, 2000); 
+      setSuccessMessage('Registration successful!');
+      // Clear the form fields after success
+      setEmail('');
+      setPassword('');
+      setFullName('');
+      setDob('');
+      setConfirmPassword('');
+      setProfilePicture(null); // Clear the profile picture
+      setPhone('');
+      setErrors({});
     }
 
     if (status === 'failed' && error) {
       if (error.email) {
-        toast.error(`Error: ${error.email[0]}`, {
-          position: 'top-right',
-          autoClose: 3000,
-        });
+        setErrorMessage(`Error: ${error.email[0]}`);
       } else {
-        toast.error('Registration failed. Please try again.', {
-          position: 'top-right',
-          autoClose: 3000,
-        });
+        setErrorMessage('Registration failed. Please try again.');
       }
     }
-  }, [status, error, navigate]);
+  }, [status, error]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-500 to-indigo-600">
-      <ToastContainer />
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-xs sm:max-w-md">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Register</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -223,11 +219,18 @@ const Register = () => {
           >
             {status === 'loading' ? 'Registering...' : 'Register'}
           </button>
-          <a></a>
         </form>
+
+        {successMessage && (
+          <p className="text-green-500 text-sm mt-4">{successMessage}</p>
+        )}
+        {errorMessage && (
+          <p className="text-red-500 text-sm mt-4">{errorMessage}</p>
+        )}
+
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">
-            Don't have an account?{' '}
+            Already have an account?{' '}
             <Link to="/login" className="text-indigo-600 hover:text-indigo-700 font-semibold">
               Sign In
             </Link>
@@ -239,3 +242,4 @@ const Register = () => {
 };
 
 export default Register;
+

@@ -1,7 +1,8 @@
+
 import React, { useState } from 'react'; 
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css'; 
+import { useDispatch, useSelector } from 'react-redux'; 
 import { useNavigate } from 'react-router-dom';
 
 // Define base URL for API requests
@@ -26,9 +27,14 @@ const PostCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Form validation
-    if (!title || !content) {
-      setErrors({ form: 'Title and content are required' });
+    // JavaScript validation
+    let formErrors = {};
+    if (!title) formErrors.title = 'Title is required';
+    if (!content) formErrors.content = 'Content is required';
+    
+    // If there are errors, set them and stop form submission
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
       return;
     }
   
@@ -50,17 +56,14 @@ const PostCreate = () => {
         const data = await response.json();
         toast.success('Post created successfully!');
         console.log(data);
-       
         navigate('/user_dashboard');
       } else {
         const errorData = await response.json();
         toast.error(`Error: ${errorData.detail || 'Failed to create post'}`);
         console.error('Error response:', errorData);
   
-      
         if (errorData.code === 'token_not_valid' && errorData.messages[0].message === 'Token is invalid or expired') {
           toast.error('Your session has expired. Please log in again.');
-          
           navigate('/login');
         }
       }
@@ -88,8 +91,8 @@ const PostCreate = () => {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter post title"
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
             />
+            {errors.title && <p className="text-red-500 text-sm">{errors.title}</p>}
           </div>
 
           <div className="mb-4">
@@ -102,8 +105,8 @@ const PostCreate = () => {
               onChange={(e) => setContent(e.target.value)}
               placeholder="Enter post content"
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
             />
+            {errors.content && <p className="text-red-500 text-sm">{errors.content}</p>}
           </div>
 
           <div className="mb-4">
